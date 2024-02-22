@@ -52,10 +52,10 @@ target_modules=[
     "lm_head.weight"]
 
 ## Trainer config
-per_device_train_batch_size = 4
-gradient_accumulation_steps = 4
-warmup_steps = 2
-num_train_epochs=1
+per_device_train_batch_size = 1
+gradient_accumulation_steps = 1
+warmup_steps = 100
+num_train_epochs=3
 weight_decay=0.1
 learning_rate = 2e-4 
 fp16 = True
