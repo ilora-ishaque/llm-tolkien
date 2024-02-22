@@ -24,24 +24,43 @@ test_size = 0.1
 shuffle = True
 
 # Training
-model_name = 'bigscience/bloom-3b'
-lora_r = 16 # attention heads
+model_name = 'NousResearch/Llama-2-7b-chat-hf'#'bigscience/bloom-3b'
+
+
+load_in_4bit=True,
+bnb_4bit_use_double_quant=True,
+bnb_4bit_quant_type="nf4",
+bnb_4bit_compute_dtype=torch.bfloat16
+
+lora_r = 8#16 # attention heads
 lora_alpha = 32 # alpha scaling
 lora_dropout = 0.05
 lora_bias = "none"
 lora_task_type = "CAUSAL_LM" # set this for CLM or Seq2Seq
+target_modules=[
+    "self_attn.q_proj",
+    "self_attn.k_proj",
+    "self_attn.v_proj",
+    "self_attn.o_proj",
+    "self_attn.rotary_emb.inv_freq",
+    "mlp.gate_proj",
+    "mlp.up_proj",
+    "mlp.down_proj",
+    "input_layernorm.weight",
+    "model.norm.weight",
+    "lm_head.weight"]
 
 ## Trainer config
-per_device_train_batch_size = 1 
-gradient_accumulation_steps = 1
-warmup_steps = 100 
-num_train_epochs=3
+per_device_train_batch_size = 4
+gradient_accumulation_steps = 4
+warmup_steps = 2
+num_train_epochs=1
 weight_decay=0.1
 learning_rate = 2e-4 
 fp16 = True
 logging_steps = 1
 overwrite_output_dir = True
-evaluation_strategy = "no"
+evaluation_strategy = "steps"
 save_strategy = "no"
 push_to_hub = False
 

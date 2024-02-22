@@ -25,12 +25,23 @@ class LLMTolkien():
     def train(
             self, 
             hf_repo: str, 
+            bnb_config: Mapping[str, Any],
+            # load_in_4bit:bool
+            # bnb_4bit_use_double_quant:bool
+            # bnb_4bit_quant_type: str
+            # bnb_4bit_compute_dtype: torch.dtype,
             lora_config: Mapping[str, Any],
             trainer_config: Mapping[str, Any],
             mlm: bool,
         ) -> None:
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        model = AutoModelForCausalLM.from_pretrained(self.model_name, device_map="auto", load_in_8bit=True)
+        # bnb_config = BitsAndBytesConfig(
+        #     load_in_4bit=load_in_4bit,
+        #     bnb_4bit_use_double_quant=bnb_4bit_use_double_quant,
+        #     bnb_4bit_quant_type=bnb_4bit_quant_type,
+        #     bnb_4bit_compute_dtype=bnb_4bit_compute_dtype
+        # )
+        model = AutoModelForCausalLM.from_pretrained(self.model_name,quantization_config=BitsAndBytesConfig(**bnb_config), device_map={"": 0} )
         model = prepare_model(model)
         model = get_peft_model(model, LoraConfig(**lora_config))
         LOGGER.info(f"Model trainable parameters:\n {print_trainable_parameters(model)}")
@@ -95,8 +106,18 @@ if __name__ == "__main__":
     parser.add_argument('--save-strategy', type=str, default=config.save_strategy, help="The saving strategy.")
     parser.add_argument('--evaluation-strategy', type=str, default=config.evaluation_strategy, help="The evaluation strategy.")
     parser.add_argument('--push-to-hub', type=bool, default=config.push_to_hub, help="Whether to push the model to the HuggingFace Hub.")
+    parser.add_argument("--load_in_4bit", type=bool, default=config.load_in_4bit, help="Whether to load data in 4-bit format.")
+    parser.add_argument("--bnb_4bit_use_double_quant", type=bool, default=config.bnb_4bit_use_double_quant, help="Whether to use double quantization in 4-bit BnB.")
+    parser.add_argument("--bnb_4bit_quant_type", type=str, default=config.bnb_4bit_quant_type, help="The quantization type for 4-bit BnB (e.g., nf4).")
+    parser.add_argument("--bnb_4bit_compute_dtype", type=torch.dtype, default=config.bnb_4bit_compute_dtype, help="The compute dtype for 4-bit BnB (e.g., torch.bfloat16).")
     args = parser.parse_args()
 
+    bnb_config = {
+        "load_in_4bit"=args.load_in_4bit,
+        "bnb_4bit_use_double_quant"=args.bnb_4bit_use_double_quant,
+        "bnb_4bit_quant_type"=args.bnb_4bit_quant_type,
+        "bnb_4bit_compute_dtype"=args.bnb_4bit_compute_dtype,
+    }
 
     lora_config = {
         "r": args.lora_r,
@@ -104,6 +125,18 @@ if __name__ == "__main__":
         "lora_dropout": args.lora_dropout, 
         'bias': args.lora_bias,
         "task_type": args.lora_task_type,
+        "target_modules":[
+            "self_attn.q_proj",
+            "self_attn.k_proj",
+            "self_attn.v_proj",
+            "self_attn.o_proj",
+            "self_attn.rotary_emb.inv_freq",
+            "mlp.gate_proj",
+            "mlp.up_proj",
+            "mlp.down_proj",
+            "input_layernorm.weight",
+            "model.norm.weight",
+            "lm_head.weight"],
     }
 
     trainer_config = {
@@ -125,7 +158,14 @@ if __name__ == "__main__":
     model = LLMTolkien(args.model_name)
     model.train(
         hf_repo=args.hf_repo,
+        bnb_config=bnb_config,
+        # load_in_4bit=args.load_in_4bit,
+        # bnb_4bit_use_double_quant=args.bnb_4bit_use_double_quant,
+        # bnb_4bit_quant_type=args.bnb_4bit_quant_type,
+        # bnb_4bit_compute_dtype=args.bnb_4bit_compute_dtype,
         lora_config=lora_config,
         trainer_config=trainer_config,
-        mlm=args.mlm
+        mlm=args.mlm,
+
     )
+
