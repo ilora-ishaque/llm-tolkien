@@ -28,9 +28,9 @@ shuffle = True
 model_name = 'NousResearch/Llama-2-7b-chat-hf'#'bigscience/bloom-3b'
 
 
-load_in_4bit=True,
-bnb_4bit_use_double_quant=True,
-bnb_4bit_quant_type="nf4",
+load_in_4bit=True
+bnb_4bit_use_double_quant=True
+bnb_4bit_quant_type="nf4"
 bnb_4bit_compute_dtype=torch.bfloat16
 
 lora_r = 8#16 # attention heads
@@ -61,7 +61,7 @@ learning_rate = 2e-4
 fp16 = True
 logging_steps = 1
 overwrite_output_dir = True
-evaluation_strategy = "steps"
+evaluation_strategy = "no"
 save_strategy = "no"
 push_to_hub = False
 

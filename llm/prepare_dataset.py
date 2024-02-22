@@ -8,6 +8,13 @@ from transformers import AutoTokenizer, PreTrainedTokenizer
 
 from llm import config
 
+# import sys    
+
+# path_to_module = 'content/llm-tolkien/llm/config.py'
+# sys.path.append(path_to_module)
+# import config
+
+
 
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
