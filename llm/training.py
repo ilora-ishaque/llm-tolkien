@@ -113,10 +113,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     bnb_config = {
-        "load_in_4bit"=args.load_in_4bit,
-        "bnb_4bit_use_double_quant"=args.bnb_4bit_use_double_quant,
-        "bnb_4bit_quant_type"=args.bnb_4bit_quant_type,
-        "bnb_4bit_compute_dtype"=args.bnb_4bit_compute_dtype,
+        "load_in_4bit":args.load_in_4bit,
+        "bnb_4bit_use_double_quant":args.bnb_4bit_use_double_quant,
+        "bnb_4bit_quant_type":args.bnb_4bit_quant_type,
+        "bnb_4bit_compute_dtype":args.bnb_4bit_compute_dtype
     }
 
     lora_config = {
@@ -136,7 +136,7 @@ if __name__ == "__main__":
             "mlp.down_proj",
             "input_layernorm.weight",
             "model.norm.weight",
-            "lm_head.weight"],
+            "lm_head.weight"]
     }
 
     trainer_config = {
