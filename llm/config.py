@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import torch
 
 REPO_DIR = Path(os.path.realpath(os.path.join(os.path.dirname(__file__), '..')))
 
