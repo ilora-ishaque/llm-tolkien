@@ -59,8 +59,8 @@ class LLMTolkien():
         model.config.use_cache = False  # silence warnings
         trainer.train()
         model.config.use_cache = True
-        model.save_pretrained("llm-tolkien")
-        model.push_to_hub(repo_id=hf_repo)
+        trainer.model.save_pretrained("llm-tolkien")
+        trainer.model.push_to_hub(repo_id=hf_repo)
         tokenizer.push_to_hub(repo_id=hf_repo)
 
     def evaluate():
@@ -155,7 +155,8 @@ if __name__ == "__main__":
         "overwrite_output_dir": args.overwrite_output_dir,
         "evaluation_strategy": args.evaluation_strategy,
         "save_strategy": args.save_strategy,
-        "push_to_hub": args.push_to_hub
+        "push_to_hub": args.push_to_hub,
+        "max_steps":1
     }
 
     model = LLMTolkien(args.model_name)
