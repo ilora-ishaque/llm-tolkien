@@ -10,7 +10,7 @@ from peft import LoraConfig, PeftModel, PeftConfig, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments, DataCollatorForLanguageModeling, BitsAndBytesConfig, HfArgumentParser
 
 import config
-from training_utils import prepare_model, print_trainable_parameters, compute_perplexity
+from training_utils import prepare_model, print_trainable_parameters, compute_perplexity,
 
 
 LOGGER = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class LLMTolkien():
         # )
         model = AutoModelForCausalLM.from_pretrained(self.model_name,quantization_config=BitsAndBytesConfig(**bnb_config), device_map={"": 0} )
   
-        model = prepare_model_for_kbit_training(model)
+        model = prepare_model(model)
         model = get_peft_model(model, LoraConfig(**lora_config))
         LOGGER.info(f"Model trainable parameters:\n {print_trainable_parameters(model)}")
         dataset = load_dataset(hf_repo)
