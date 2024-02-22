@@ -43,7 +43,8 @@ class LLMTolkien():
         #     bnb_4bit_compute_dtype=bnb_4bit_compute_dtype
         # )
         model = AutoModelForCausalLM.from_pretrained(self.model_name,quantization_config=BitsAndBytesConfig(**bnb_config), device_map={"": 0} )
-        model = prepare_model(model)
+  
+        model = prepare_model_for_kbit_training(model)
         model = get_peft_model(model, LoraConfig(**lora_config))
         LOGGER.info(f"Model trainable parameters:\n {print_trainable_parameters(model)}")
         dataset = load_dataset(hf_repo)
