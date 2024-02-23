@@ -59,9 +59,14 @@ class LLMTolkien():
         model.config.use_cache = False  # silence warnings
         trainer.train()
         model.config.use_cache = True
-        model.save_pretrained("llm-tolkien")
-        trainer.model.push_to_hub(repo_id=hf_repo, token=True)
-        trainer.tokenizer.push_to_hub(repo_id=hf_repo, token=True)
+####################
+        # model.save_pretrained("llm-tolkien")
+        # trainer.model.push_to_hub(repo_id=hf_repo, token=True)
+        # trainer.tokenizer.push_to_hub(repo_id=hf_repo, token=True)
+#####################
+
+        model.save_pretrained('./adapter', token=True)
+        model.push_to_hub('iloraishaque/llm-tolkien', token=True, safe_serialization=True)
 
     def evaluate():
         pass
