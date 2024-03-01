@@ -27,21 +27,11 @@ class LLMTolkien():
             self, 
             hf_repo: str, 
             bnb_config: Mapping[str, Any],
-            # load_in_4bit:bool
-            # bnb_4bit_use_double_quant:bool
-            # bnb_4bit_quant_type: str
-            # bnb_4bit_compute_dtype: torch.dtype,
             lora_config: Mapping[str, Any],
             trainer_config: Mapping[str, Any],
             mlm: bool,
         ) -> None:
         tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        # bnb_config = BitsAndBytesConfig(
-        #     load_in_4bit=load_in_4bit,
-        #     bnb_4bit_use_double_quant=bnb_4bit_use_double_quant,
-        #     bnb_4bit_quant_type=bnb_4bit_quant_type,
-        #     bnb_4bit_compute_dtype=bnb_4bit_compute_dtype
-        # )
         model = AutoModelForCausalLM.from_pretrained(self.model_name,quantization_config=BitsAndBytesConfig(**bnb_config), device_map={"": 0} )
   
         model = prepare_model(model)
@@ -160,18 +150,14 @@ if __name__ == "__main__":
         "overwrite_output_dir": args.overwrite_output_dir,
         "evaluation_strategy": args.evaluation_strategy,
         "save_strategy": args.save_strategy,
-        "push_to_hub": args.push_to_hub,
-        "max_steps":1
+        "push_to_hub": args.push_to_hub
+        # ,"max_steps":1
     }
 
     model = LLMTolkien(args.model_name)
     model.train(
         hf_repo=args.hf_repo,
         bnb_config=bnb_config,
-        # load_in_4bit=args.load_in_4bit,
-        # bnb_4bit_use_double_quant=args.bnb_4bit_use_double_quant,
-        # bnb_4bit_quant_type=args.bnb_4bit_quant_type,
-        # bnb_4bit_compute_dtype=args.bnb_4bit_compute_dtype,
         lora_config=lora_config,
         trainer_config=trainer_config,
         mlm=args.mlm,
